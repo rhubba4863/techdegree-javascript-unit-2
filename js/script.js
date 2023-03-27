@@ -3,7 +3,8 @@ Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
 document.addEventListener('DOMContentLoaded', () => {
-   const ul = document.querySelector(".student-list");
+   let header = document.querySelector(".header");
+   let ul = document.querySelector(".student-list");
    const ulButton = document.querySelector(".link-list");
    //let shownStudentList = data;
    let currentStart = 0;
@@ -115,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log("Start:", start);
       console.log("End:", end);
 
+      makeFiltering();
    }
 
    /*
@@ -146,8 +148,41 @@ document.addEventListener('DOMContentLoaded', () => {
       }   
    }
 
+   function makeFiltering(){
+
+      function createElement(elementName, property, value) {
+         const element = document.createElement(elementName);
+         element[property] = value;
+         return element;
+      } 
+
+      //    <label for="search" class="student-search">
+      //       <span>Search by name</span>
+      //       <input id="search" placeholder="Search by name...">
+      //       <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+      //    </label> 
+
+      //Header is defined globally
+      //let header = document.querySelector(".header");
+      let h2Title = header.querySelector("h2");
+
+      // search.append(createElement('label'))
+      
+      let label = createElement('label', 'className', 'student-search');
+      label.setAttribute("for","search");
+      let span = createElement('span');
+      let filterInput = createElement('input');
+      filterInput.setAttribute("id","search");
+      filterInput.setAttribute("placeholder","Search by name...");
+      let button = createElement('button', 'type', 'button');
+
+      //h2Title.appendChild(label);
+      //, filterInput, button
+      //label.setAttribute("","");
+   }
+
    function removeAllStudents(){
-      let students =  ul.querySelectorAll(".student-item cf");
+      let students =  ul.querySelectorAll(".student-item.cf");
       console.log("1) students to remove:" + students.length);
 
       students.forEach(student => {
@@ -197,4 +232,8 @@ document.addEventListener('DOMContentLoaded', () => {
    showPage();
    addPagination(studentList);
    //findButtons();
+
+   function filterStudents(name){
+      let studentList = data;
+   }
 });
