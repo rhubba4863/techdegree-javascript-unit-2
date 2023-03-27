@@ -5,9 +5,11 @@ FSJS Project 2 - Data Pagination and Filtering
 document.addEventListener('DOMContentLoaded', () => {
    const ul = document.querySelector(".student-list");
    const ulButton = document.querySelector(".link-list");
+   //let shownStudentList = data;
    let currentStart = 0;
    let currentEnd = 0;
    let counter = 0; //RPH: might not be needed
+   let buttonNowSelected = 1;
 
    function buttonTotal(){
       const totalButtons = Math.ceil(studentList.length/9);
@@ -90,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
    function showPage(){
       let start = currentStart; 
-      let end = 9; //edit later
-      let remainingStudents = (totalStudents - currentStart)
+      let end = buttonNowSelected * 9; 
+      let remainingStudents = (totalStudents - start)
 
       //check if 9 still can are shown
       if(remainingStudents < 9){
@@ -99,18 +101,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }else if (remainingStudents == 0){
          start = 0;
          end = 9;
-      }else {
-         currentStart = currentStart+9;
       }
+     
+      removeAllStudents();
 
+      //Now add the students
       for (let i = start; i < end; i++){
          ul.appendChild(createStudentLI(i));
          counter = counter++;
       }
+
+      console.log("currentStart:", currentStart);
+      console.log("Start:", start);
+      console.log("End:", end);
+
    }
-
-
-   //showPage();
 
    /*
    Create the `addPagination` function
@@ -141,26 +146,55 @@ document.addEventListener('DOMContentLoaded', () => {
       }   
    }
 
+   function removeAllStudents(){
+      let students =  ul.querySelectorAll(".student-item cf");
+      console.log("1) students to remove:" + students.length);
+
+      students.forEach(student => {
+         student.remove();
+       });
+       console.log("2) students to remove:" + students.length);
+   };
+
+   function findButtons(){
+      const buttons =  ulButton.querySelectorAll("button");
+
+      // console.log(buttons.length);
+      // console.log(buttons[0].getAttribute("className"));
+      // console.log(buttons[0].hasAttribute("className"));
+
+      // for (let i = 0; i < (buttons.length); i++){
+      //    console.log(i + " "+ buttons[i].hasAttribute("className"));
+      // }
+
+      return buttons;
+   };
+   
    // Call functions
    ulButton.addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON') {
          const totalButtons = buttonTotal();
          const button = e.target;
-         const li = button.parentNode;
-         const ul = li.parentNode;
-         
+         const allButtons = findButtons();
 
-         for (let i = 1; i < (totalButtons+1); i++){
-            button.removeAttribute("className");
+         for (let i = 0; i < (allButtons.length); i++){
+            //console.log(i);
+            allButtons[i].removeAttribute("className");
          }
 
          //const button = e.target;
          button.setAttribute("className", "active");
+         buttonNowSelected = button.textContent;
+
+         currentStart = (9 * (buttonNowSelected - 1));
       }
-      // showPage();
+
+
+       showPage();
       // addPagination(studentList);
    });
    
    showPage();
    addPagination(studentList);
+   //findButtons();
 });
