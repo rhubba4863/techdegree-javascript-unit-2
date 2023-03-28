@@ -6,15 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
    let header = document.querySelector(".header");
    let ul = document.querySelector(".student-list");
    const ulButton = document.querySelector(".link-list");
-   //let shownStudentList = data;
+   let filterText;
+   let filterButton = null;
    let currentStart = 0;
-   let currentEnd = 0;
-   let counter = 0; //RPH: might not be needed
    let buttonNowSelected = 1;
 
    function buttonTotal(){
-      const totalButtons = Math.ceil(studentList.length/9);
-      console.log("pages expected "+(totalButtons));
+      let totalButtons = Math.ceil(studentList.length/9);
       return totalButtons;
    }
 
@@ -30,14 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
    Create the `showPage` function
    This function will create and insert/append the elements needed to display a "page" of nine students
    */
+   let studentList = data;
+   let totalStudents = studentList.length;
 
-   //let spot;
-   const studentList = data;
-   const totalStudents = studentList.length;
+   //Log for later use
+   //console.log("Total Students:", totalStudents);
 
-   console.log("Total Students:", totalStudents);
-   console.log("RPH1 checking student name:", studentList[1].name.last);
-
+   //Create 1 Student profile/square
    function createStudentLI(spot){
       const oneStudent = studentList[spot];
       const name = oneStudent.name.last + " " + oneStudent.name.first;
@@ -67,13 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
       //Pieces all the elements together
       appendToLI('div', 'className', "student-details")
         .append(myImage, myName, contact);
-
       let joinDate = createElement('span', 'className', 'date');
       joinDate.textContent = "Joined " + oneStudent.registered.date;  
       appendToLI('div', 'className', "joined-details")
          .append(joinDate);
       
-     // console.log(li);
       return li;
    }
 
@@ -109,12 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       //Now add the students
       for (let i = start; i < end; i++){
          ul.appendChild(createStudentLI(i));
-         counter = counter++;
       }
-
-      console.log("currentStart:", currentStart);
-      console.log("Start:", start);
-      console.log("End:", end);
 
       makeFiltering();
    }
@@ -124,7 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
    This function will create and insert/append the elements needed for the pagination buttons
    */
    function addPagination(list){
-      const totalButtons = buttonTotal();
+      let totalButtons = buttonTotal();
+
+      removeButtons();
 
       function createElement(elementName, property, value) {
          const element = document.createElement(elementName);
@@ -162,58 +154,62 @@ document.addEventListener('DOMContentLoaded', () => {
       //       <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
       //    </label> 
 
-      //Header is defined globally
-      //let header = document.querySelector(".header");
-      let h2Title = header.querySelector("h2");
+      let filterInput =  header.querySelectorAll("#search");
 
-      // search.append(createElement('label'))
-      
-      let label = createElement('label', 'className', 'student-search');
-      label.setAttribute("for","search");
-      let span = createElement('span');
-      let filterInput = createElement('input');
-      filterInput.setAttribute("id","search");
-      filterInput.setAttribute("placeholder","Search by name...");
-      let button = createElement('button', 'type', 'button');
+      if(filterInput.length == 0){
+         //Each element and and its attributes      
+         let label = createElement('label', 'className', 'student-search');
+         label.setAttribute("for","search");
+         let span = createElement('span');
+         span.innerHTML = 'Search by name';
+         let filterInput = createElement('input');
+         filterInput.setAttribute("id","search");
+         filterInput.setAttribute("placeholder","Search by name...");
+         let button = createElement('button', 'type', 'button');
+         let myImage = createElement('img', 'src', 'img/icn-search.svg');
+         
+         //Now append them together
+         button.append(myImage);
+         label.append(span, filterInput, button);
+         header.appendChild(label);
 
-      //h2Title.appendChild(label);
-      //, filterInput, button
-      //label.setAttribute("","");
+         filterButton = button;
+      }
+
+      filterInput =  header.querySelectorAll("#search");
+      finalFilter = filterInput;
    }
 
    function removeAllStudents(){
       let students =  ul.querySelectorAll(".student-item.cf");
-      console.log("1) students to remove:" + students.length);
 
       students.forEach(student => {
          student.remove();
        });
-       console.log("2) students to remove:" + students.length);
    };
 
    function findButtons(){
       const buttons =  ulButton.querySelectorAll("button");
-
-      // console.log(buttons.length);
-      // console.log(buttons[0].getAttribute("className"));
-      // console.log(buttons[0].hasAttribute("className"));
-
-      // for (let i = 0; i < (buttons.length); i++){
-      //    console.log(i + " "+ buttons[i].hasAttribute("className"));
-      // }
-
       return buttons;
    };
+
+   function removeButtons(){
+      const buttons =  ulButton.querySelectorAll("li");
+
+      buttons.forEach(paginate => {
+         paginate.remove();
+       });
+   };
    
-   // Call functions
+   // Clicking the paginate
    ulButton.addEventListener('click', (e) => {
+
       if (e.target.tagName === 'BUTTON') {
          const totalButtons = buttonTotal();
          const button = e.target;
          const allButtons = findButtons();
 
          for (let i = 0; i < (allButtons.length); i++){
-            //console.log(i);
             allButtons[i].removeAttribute("className");
          }
 
@@ -224,16 +220,48 @@ document.addEventListener('DOMContentLoaded', () => {
          currentStart = (9 * (buttonNowSelected - 1));
       }
 
-
-       showPage();
-      // addPagination(studentList);
+      //Now refresh the page shown
+      showPage();
+      addPagination(studentList);
    });
-   
+
    showPage();
    addPagination(studentList);
-   //findButtons();
+   
+   function filterStudents(filter){
+      let studentFilterList = data;
+      let finalList = [];
 
-   function filterStudents(name){
-      let studentList = data;
+      if((filter.length == 0) || (filter == null) ){
+         studentList = data;
+         totalStudents = studentList.length;
+      }else{
+         for (let i = 0; i < (studentFilterList.length); i++){         
+            let name = (studentFilterList[i].name.first + " " +
+            studentFilterList[i].name.last).toLowerCase();
+
+            filter = filter.toLowerCase();
+            filterText = filter;
+
+            if (name.includes(filter.toLowerCase())){
+               finalList.push(studentFilterList[i]);
+            }
+         }
+
+         studentList = finalList;
+         totalStudents = studentList.length;
+      }
+
+      //Confirm the paginate is updated by the filter
+      addPagination(studentList);
    }
+
+   filterButton.addEventListener('click', (e) => {
+      let input = header.querySelector('input');
+      const text = input.value;
+           
+      filterStudents(text);
+
+      showPage();
+    });
 });
