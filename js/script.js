@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
          button.textContent = i;
 
          if(i === 1){
-            button.setAttribute("className", "active");
+            button.classList.add("active");
          }
 
          li.appendChild(button);
@@ -210,11 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
          const allButtons = findButtons();
 
          for (let i = 0; i < (allButtons.length); i++){
-            allButtons[i].removeAttribute("className");
+            //1) RPH play with "class" attribute
+            allButtons[i].classList.remove("active");
          }
 
          //const button = e.target;
-         button.setAttribute("className", "active");
+         //2) RPH play with "class" attribute
+         button.classList.add("active");
          buttonNowSelected = button.textContent;
 
          currentStart = (9 * (buttonNowSelected - 1));
@@ -222,14 +224,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       //Now refresh the page shown
       showPage();
-      addPagination(studentList);
+
    });
 
-   showPage();
+   showPage(); 
    addPagination(studentList);
    
    function filterStudents(filter){
-      let studentFilterList = data;
+      let studentFilterList = data; 
       let finalList = [];
 
       if((filter.length == 0) || (filter == null) ){
@@ -253,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       //Confirm the paginate is updated by the filter
+      showPage();
       addPagination(studentList);
    }
 
