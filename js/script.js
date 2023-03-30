@@ -91,6 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let end = buttonNowSelected * 9; 
       let remainingStudents = (totalStudents - start)
 
+      displayNoResultsFound();
+
       //check if 9 still can are shown
       if(remainingStudents < 9){
         end = totalStudents;
@@ -107,6 +109,34 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       makeFiltering();
+   }
+
+   function  displayNoResultsFound(){
+      function createElement(elementName, property, value) {
+         const element = document.createElement(elementName);
+         element[property] = value;
+         return element;
+      } 
+
+      let noStudentsMessage = createElement('div');
+      noStudentsMessage.textContent = "No results found";
+      noStudentsMessage.setAttribute("id","lost");
+      let shownStudents =  ul.querySelectorAll("#lost");
+      //noStudentsMessage.
+      if((totalStudents == 0) && (shownStudents.length == 0)){    //
+         ul.appendChild(noStudentsMessage);
+      } 
+      else if (totalStudents > 1){
+         let students =  ul.querySelectorAll("#lost");
+         students.forEach(student => {
+         student.remove()
+         }); 
+      }
+      else if (shownStudents.length > 1){
+         let students =  ul.querySelectorAll("#lost");
+         // students.forEach(student => {
+          students[0].remove(); 
+      }
    }
 
    /*
@@ -199,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
       buttons.forEach(paginate => {
          paginate.remove();
        });
-   };
+   }; 
    
    // Clicking the paginate
    ulButton.addEventListener('click', (e) => {
@@ -212,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
          for (let i = 0; i < (allButtons.length); i++){
             //1) RPH play with "class" attribute
             allButtons[i].classList.remove("active");
+            allButtons[i].removeAttribute("class");
          }
 
          //const button = e.target;
